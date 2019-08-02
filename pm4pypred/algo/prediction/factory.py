@@ -1,6 +1,6 @@
 import joblib
 
-from pm4py.algo.prediction.versions import elasticnet, keras_rnn
+from pm4pypred.algo.prediction.versions import elasticnet, keras_rnn
 
 ELASTICNET = "elasticnet"
 KERAS_RNN = "keras_rnn"
