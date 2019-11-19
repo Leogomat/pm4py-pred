@@ -96,9 +96,17 @@ def train(log, parameters=None):
         if activity_key not in str_ev_attr:
             str_ev_attr.append(activity_key)
 
-    ext_log, change_indexes = get_log_with_log_prefixes(log)
-    data, feature_names = get_log_representation.get_representation(ext_log, str_tr_attr, str_ev_attr, num_tr_attr,
-                                                                    num_ev_attr, str_evsucc_attr=str_evsucc_attr)
+    max_trace_length = max(len(x) for x in log)
+
+    if max_trace_length == 1:
+        # this you shall use
+        data, feature_names = get_log_representation.get_representation(log, str_tr_attr, str_ev_attr, num_tr_attr,
+                                                                        num_ev_attr, str_evsucc_attr=str_evsucc_attr)
+        ext_log = log
+    else:
+        ext_log, change_indexes = get_log_with_log_prefixes(log)
+        data, feature_names = get_log_representation.get_representation(ext_log, str_tr_attr, str_ev_attr, num_tr_attr,
+                                                                        num_ev_attr, str_evsucc_attr=str_evsucc_attr)
 
     if y_orig is not None:
         remaining_time = [y for x in y_orig for y in x]
@@ -123,6 +131,7 @@ def train(log, parameters=None):
                 else:
                     remaining_time.append(0)
     regr = ElasticNet(max_iter=10000, l1_ratio=0.7)
+    print(data)
     regr.fit(data, remaining_time)
 
     return {"str_tr_attr": str_tr_attr, "str_ev_attr": str_ev_attr, "num_tr_attr": num_tr_attr,
